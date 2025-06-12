@@ -26,6 +26,7 @@ void delay_us(uint32_t us) {
     }
 }
 
+// 1s= 100ms
 void delay_ms(uint32_t ms) {
     while (ms--) {
         delay_us(1000);

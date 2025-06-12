@@ -1,0 +1,9 @@
+../Core/Src/lora.c:11:6:SPI1_Init	1
+../Core/Src/lora.c:30:6:LORA_GPIO_Init	1
+../Core/Src/lora.c:43:13:spi1_write	3
+../Core/Src/lora.c:50:16:spi1_transfer	3
+../Core/Src/lora.c:57:13:lora_write_reg	1
+../Core/Src/lora.c:64:16:lora_read_reg	1
+../Core/Src/lora.c:72:6:lora_init	4
+../Core/Src/lora.c:106:6:lora_prepare_and_send	4
+../Core/Src/lora.c:127:6:lora_send_packet	5

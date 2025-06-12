@@ -1,0 +1,2 @@
+../Core/Src/lora_packet.c:5:9:lora_packet_checksum	2
+../Core/Src/lora_packet.c:14:6:lora_packet_prepare	3
