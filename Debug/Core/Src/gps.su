@@ -1,0 +1,15 @@
+../Drivers/CMSIS/Include/core_cm3.h:1499:26:__NVIC_GetPriorityGrouping	4	static
+../Drivers/CMSIS/Include/core_cm3.h:1511:22:__NVIC_EnableIRQ	16	static
+../Drivers/CMSIS/Include/core_cm3.h:1639:22:__NVIC_SetPriority	16	static
+../Drivers/CMSIS/Include/core_cm3.h:1686:26:NVIC_EncodePriority	40	static
+../Core/Src/gps.c:36:17:calculate_unix_timestamp	40	static
+../Core/Src/gps.c:51:12:validate_nmea_checksum	32	static
+../Core/Src/gps.c:68:6:DEBUG_UART_Init	4	static
+../Core/Src/gps.c:79:6:DEBUG_Print	16	static
+../Core/Src/gps.c:86:6:GPS_UART_Init	8	static
+../Core/Src/gps.c:101:6:USART2_IRQHandler	528	static
+../Core/Src/gps.c:147:6:GPS_Parse_NMEA	368	static
+../Core/Src/gps.c:283:12:is_point_in_polygon	48	static
+../Core/Src/gps.c:295:6:GPS_Init	8	static
+../Core/Src/gps.c:300:10:GPS_Get_Timestamp	4	static
+../Core/Src/gps.c:304:6:GPS_Check_Geofence	184	static

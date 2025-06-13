@@ -1,5 +1,10 @@
-../Core/Src/led.c:4:6:LED_Init	4	static
-../Core/Src/led.c:21:6:LED_POWER_ON	4	static
-../Core/Src/led.c:25:6:LED_OK_ON	4	static
-../Core/Src/led.c:29:6:LED_ERR_ON	4	static
-../Core/Src/led.c:33:6:LED_SEND_TOGGLE	4	static
+../Core/Src/led.c:3:6:LED_Init	4	static
+../Core/Src/led.c:23:6:LED_POWER_ON	4	static
+../Core/Src/led.c:27:6:LED_POWER_OFF	4	static
+../Core/Src/led.c:31:6:LED_OK_ON	4	static
+../Core/Src/led.c:35:6:LED_OK_OFF	4	static
+../Core/Src/led.c:39:6:LED_ERR_ON	4	static
+../Core/Src/led.c:43:6:LED_ERR_OFF	4	static
+../Core/Src/led.c:47:6:LED_SEND_ON	4	static
+../Core/Src/led.c:51:6:LED_SEND_OFF	4	static
+../Core/Src/led.c:55:6:LED_SEND_TOGGLE	4	static

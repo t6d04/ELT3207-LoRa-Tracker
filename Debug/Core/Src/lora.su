@@ -5,5 +5,5 @@
 ../Core/Src/lora.c:57:13:lora_write_reg	16	static
 ../Core/Src/lora.c:64:16:lora_read_reg	24	static
 ../Core/Src/lora.c:72:6:lora_init	24	static
-../Core/Src/lora.c:106:6:lora_prepare_and_send	64	static
-../Core/Src/lora.c:127:6:lora_send_packet	24	static
+../Core/Src/lora.c:105:6:lora_prepare_and_send	64	static
+../Core/Src/lora.c:131:6:lora_send_packet	24	static

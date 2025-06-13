@@ -14,8 +14,13 @@
 // Function declarations
 void LED_Init(void);
 void LED_POWER_ON(void);
+void LED_POWER_OFF(void);
 void LED_OK_ON(void);
+void LED_OK_OFF(void);
 void LED_ERR_ON(void);
+void LED_ERR_OFF(void);
+void LED_SEND_ON(void);
+void LED_SEND_OFF(void);
 void LED_SEND_TOGGLE(void);
 
 #endif // __LED_H

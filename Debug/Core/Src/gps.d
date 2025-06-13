@@ -1,4 +1,4 @@
-Core/Src/lora.o: ../Core/Src/lora.c ../Core/Inc/lora.h ../Core/Inc/led.h \
+Core/Src/gps.o: ../Core/Src/gps.c ../Core/Inc/gps.h \
  ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h \
  ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h \
  ../Drivers/CMSIS/Include/core_cm3.h \
@@ -21,9 +21,8 @@ Core/Src/lora.o: ../Core/Src/lora.c ../Core/Inc/lora.h ../Core/Inc/led.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h \
- ../Core/Inc/timer.h
-../Core/Inc/lora.h:
-../Core/Inc/led.h:
+ ../Core/Inc/timer.h ../Core/Inc/led.h ../Core/Inc/lora.h
+../Core/Inc/gps.h:
 ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h:
 ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h:
 ../Drivers/CMSIS/Include/core_cm3.h:
@@ -47,3 +46,5 @@ Core/Src/lora.o: ../Core/Src/lora.c ../Core/Inc/lora.h ../Core/Inc/led.h \
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h:
 ../Core/Inc/timer.h:
+../Core/Inc/led.h:
+../Core/Inc/lora.h:

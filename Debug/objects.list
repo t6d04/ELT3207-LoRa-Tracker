@@ -1,3 +1,4 @@
+"./Core/Src/gps.o"
 "./Core/Src/led.o"
 "./Core/Src/lora.o"
 "./Core/Src/lora_packet.o"

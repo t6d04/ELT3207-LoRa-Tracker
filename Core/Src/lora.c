@@ -1,27 +1,27 @@
-#include "stm32f1xx.h"
 #include "lora.h"
-#include "timer.h"
 #include "led.h"
+#include "timer.h"
+#include <string.h>
 
-#define LORA_NSS_LOW()   (GPIOA->BSRR = GPIO_BSRR_BR4)   // Bắt đầu giao tiếp
-#define LORA_NSS_HIGH()  (GPIOA->BSRR = GPIO_BSRR_BS4)   // Kết thúc giao tiếp
-#define LORA_RST_LOW()   (GPIOA->BSRR = GPIO_BSRR_BR2)
-#define LORA_RST_HIGH()  (GPIOA->BSRR = GPIO_BSRR_BS2)
+#define LORA_NSS_LOW()   (GPIOA->BSRR = GPIO_BSRR_BR4)
+#define LORA_NSS_HIGH()  (GPIOA->BSRR = GPIO_BSRR_BS4)
+#define LORA_RST_LOW()   (GPIOA->BSRR = GPIO_BSRR_BR1)   // PA1: RST
+#define LORA_RST_HIGH()  (GPIOA->BSRR = GPIO_BSRR_BS1)
 
 void SPI1_Init(void) {
     RCC->APB2ENR |= RCC_APB2ENR_IOPAEN | RCC_APB2ENR_AFIOEN | RCC_APB2ENR_SPI1EN;
 
     GPIOA->CRL &= ~(GPIO_CRL_CNF5 | GPIO_CRL_MODE5);
-    GPIOA->CRL |=  (GPIO_CRL_MODE5_1 | GPIO_CRL_MODE5_0 | GPIO_CRL_CNF5_1);
+    GPIOA->CRL |=  (GPIO_CRL_MODE5_1 | GPIO_CRL_MODE5_0 | GPIO_CRL_CNF5_1); // PA5: SCK
 
     GPIOA->CRL &= ~(GPIO_CRL_CNF7 | GPIO_CRL_MODE7);
-    GPIOA->CRL |=  (GPIO_CRL_MODE7_1 | GPIO_CRL_MODE7_0 | GPIO_CRL_CNF7_1);
+    GPIOA->CRL |=  (GPIO_CRL_MODE7_1 | GPIO_CRL_MODE7_0 | GPIO_CRL_CNF7_1); // PA7: MOSI
 
     GPIOA->CRL &= ~(GPIO_CRL_CNF6 | GPIO_CRL_MODE6);
-    GPIOA->CRL |= GPIO_CRL_CNF6_0;
+    GPIOA->CRL |= GPIO_CRL_CNF6_0; // PA6: MISO
 
     GPIOA->CRL &= ~(GPIO_CRL_CNF4 | GPIO_CRL_MODE4);
-    GPIOA->CRL |= (GPIO_CRL_MODE4_1 | GPIO_CRL_MODE4_0);
+    GPIOA->CRL |= (GPIO_CRL_MODE4_1 | GPIO_CRL_MODE4_0); // PA4: NSS
 
     SPI1->CR1 = SPI_CR1_MSTR | SPI_CR1_SSI | SPI_CR1_SSM | SPI_CR1_BR_1;
     SPI1->CR1 |= SPI_CR1_SPE;
@@ -30,14 +30,14 @@ void SPI1_Init(void) {
 void LORA_GPIO_Init(void) {
     RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
 
-    GPIOA->CRL &= ~(GPIO_CRL_MODE2 | GPIO_CRL_CNF2);
-    GPIOA->CRL |= (GPIO_CRL_MODE2_1 | GPIO_CRL_MODE2_0);
+    GPIOA->CRL &= ~(GPIO_CRL_MODE1 | GPIO_CRL_CNF1);
+    GPIOA->CRL |= (GPIO_CRL_MODE1_1 | GPIO_CRL_MODE1_0); // PA1: RST
 
     GPIOA->CRL &= ~(GPIO_CRL_MODE4 | GPIO_CRL_CNF4);
-    GPIOA->CRL |= (GPIO_CRL_MODE4_1 | GPIO_CRL_MODE4_0);
+    GPIOA->CRL |= (GPIO_CRL_MODE4_1 | GPIO_CRL_MODE4_0); // PA4: NSS
 
-    GPIOA->BSRR = GPIO_BSRR_BS4;
-    GPIOA->BSRR = GPIO_BSRR_BS2;
+    LORA_NSS_HIGH();
+    LORA_RST_HIGH();
 }
 
 static void spi1_write(uint8_t data) {
@@ -80,42 +80,46 @@ void lora_init(void) {
         LED_OK_ON();
     } else {
         LED_ERR_ON();
-        while (1);
+        return; // Không treo
     }
 
-    lora_write_reg(0x01, 0x80);
-    lora_write_reg(0x01, 0x81);
+    lora_write_reg(0x01, 0x80); // Sleep + LoRa
+    lora_write_reg(0x01, 0x81); // Standby + LoRa
 
-    lora_write_reg(0x06, 0x6C);
+    lora_write_reg(0x06, 0x6C); // 433 MHz
     lora_write_reg(0x07, 0x80);
     lora_write_reg(0x08, 0x00);
 
-    lora_write_reg(0x20, 0x00);
+    lora_write_reg(0x20, 0x00); // Preamble
     lora_write_reg(0x21, 0x08);
 
-    lora_write_reg(0x39, 0x12);
+    lora_write_reg(0x39, 0x12); // Sync word
 
-    lora_write_reg(0x1D, 0x72);
-    lora_write_reg(0x1E, 0xC4);
-    lora_write_reg(0x26, 0x04);
+    lora_write_reg(0x1D, 0x72); // BW 125 kHz, CR 4/5
+    lora_write_reg(0x1E, 0xC4); // SF12
+    lora_write_reg(0x26, 0x04); // Low data rate
 
-    lora_write_reg(0x0E, 0x00);
-    LED_POWER_ON();
+    lora_write_reg(0x0E, 0x00); // FIFO TX base
 }
 
 void lora_prepare_and_send(uint8_t dev_id, uint32_t timestamp, float lat, float lon) {
-    uint8_t* plat = (uint8_t*)&lat;
-    uint8_t* plon = (uint8_t*)&lon;
     uint8_t packet[14];
+    union {
+        float f;
+        uint8_t b[4];
+    } lat_u, lon_u;
 
     packet[0] = dev_id;
-    packet[1] = (timestamp >> 0) & 0xFF;
-    packet[2] = (timestamp >> 8) & 0xFF;
-    packet[3] = (timestamp >> 16) & 0xFF;
-    packet[4] = (timestamp >> 24) & 0xFF;
+    packet[1] = (uint8_t)(timestamp & 0xFF);
+    packet[2] = (uint8_t)((timestamp >> 8) & 0xFF);
+    packet[3] = (uint8_t)((timestamp >> 16) & 0xFF);
+    packet[4] = (uint8_t)((timestamp >> 24) & 0xFF);
 
-    for (int i = 0; i < 4; i++) packet[5 + i] = plat[i];
-    for (int i = 0; i < 4; i++) packet[9 + i] = plon[i];
+    lat_u.f = lat;
+    for (int i = 0; i < 4; i++) packet[5 + i] = lat_u.b[i];
+
+    lon_u.f = lon;
+    for (int i = 0; i < 4; i++) packet[9 + i] = lon_u.b[i];
 
     uint8_t crc = 0;
     for (int i = 0; i < 13; i++) crc ^= packet[i];
