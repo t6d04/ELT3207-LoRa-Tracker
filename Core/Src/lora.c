@@ -2,6 +2,7 @@
 #include "led.h"
 #include "timer.h"
 #include <string.h>
+#include <stdio.h> // Thêm để dùng snprintf
 
 #define LORA_NSS_LOW()   (GPIOA->BSRR = GPIO_BSRR_BR4)
 #define LORA_NSS_HIGH()  (GPIOA->BSRR = GPIO_BSRR_BS4)
@@ -125,6 +126,18 @@ void lora_prepare_and_send(uint8_t dev_id, uint32_t timestamp, float lat, float 
     for (int i = 0; i < 13; i++) crc ^= packet[i];
     packet[13] = crc;
 
+    // Debug gói tin qua Serial
+    char debug_buf[128];
+    snprintf(debug_buf, sizeof(debug_buf), "Packet: ");
+    DEBUG_Print(debug_buf);
+    for (int i = 0; i < 14; i++) {
+        snprintf(debug_buf, sizeof(debug_buf), "0x%02X ", packet[i]);
+        DEBUG_Print(debug_buf);
+    }
+    snprintf(debug_buf, sizeof(debug_buf), "\r\nSending: DevID=%d, Timestamp=%u, Lat=%.6f, Lon=%.6f\r\n",
+             dev_id, timestamp, lat, lon);
+    DEBUG_Print(debug_buf);
+
     lora_send_packet(packet, 14);
 }
 
@@ -147,9 +160,15 @@ void lora_send_packet(uint8_t* data, uint8_t len) {
     while ((lora_read_reg(0x12) & 0x08) == 0 && timeout--);
     if (timeout == 0) {
         LED_ERR_ON();
+        char debug_buf[64];
+        snprintf(debug_buf, sizeof(debug_buf), "Tx Timeout, IRQ Flags: 0x%02X\r\n", lora_read_reg(0x12));
+        DEBUG_Print(debug_buf);
         return;
     }
     lora_write_reg(0x12, 0x08);
     LED_SEND_TOGGLE();
     lora_write_reg(0x01, 0x80);
+    char debug_buf[64];
+    snprintf(debug_buf, sizeof(debug_buf), "Packet sent successfully\r\n");
+    DEBUG_Print(debug_buf);
 }
